@@ -90,7 +90,7 @@ jobs:
           Copy-Item "$source/*" -Destination "$rimtrans/RimTrans" -Recurse
 
       - name: Upload ${{ matrix.publish_type }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: RimTrans-${{ matrix.publish_type }}-win-x64
           path: ${{ env.Output_Dir }}/rimtrans-${{ matrix.publish_type }}
