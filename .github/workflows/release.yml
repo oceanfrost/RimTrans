@@ -141,6 +141,15 @@ jobs:
           echo "Built by [this GitHub Actions run](https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }})." >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Create Tag
+        if: ${{ github.event.inputs.type != 'Edge' }}
+        shell: bash
+        run: |
+          git tag "${{ env.VERSION }}"
+          git push origin "${{ env.VERSION }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create Release
         uses: ncipollo/release-action@v1.20.0
         with:
