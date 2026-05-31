@@ -33,6 +33,7 @@ on:
 
 permissions:
   contents: write
+  workflows: write
   packages: read
 
 jobs:
