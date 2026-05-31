@@ -145,8 +145,12 @@ jobs:
         if: ${{ github.event.inputs.type != 'Edge' }}
         shell: bash
         run: |
-          git tag "${{ env.VERSION }}"
-          git push origin "${{ env.VERSION }}"
+          if ! git ls-remote --tags origin | grep -q "refs/tags/${{ env.VERSION }}$"; then
+            git tag "${{ env.VERSION }}"
+            git push origin "${{ env.VERSION }}"
+          else
+            echo "Tag ${{ env.VERSION }} already exists on remote, skipping push"
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
