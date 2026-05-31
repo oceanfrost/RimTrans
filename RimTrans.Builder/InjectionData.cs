@@ -412,13 +412,8 @@ namespace RimTrans.Builder {
         /// </summary>
         private static IEnumerable<object> GenRecursively(XElement field, LinkedList<XElement> fieldPath) {
             foreach (XElement fieldChild in field.Elements()) {
-                if (fieldChild.HasElements) {
-                    fieldPath.AddLast(fieldChild);
-                    foreach (object content in GenRecursively(fieldChild, fieldPath)) {
-                        yield return content;
-                    }
-                    fieldPath.RemoveLast();
-                } else if (fieldChild.IsInjectable() || fieldChild.IsInjectableExtra()) {
+                // Extract this element's own text if it's injectable (even if it also has child elements).
+                if (fieldChild.IsInjectable() || fieldChild.IsInjectableExtra()) {
                     StringBuilder fullFieldName = new StringBuilder();
                     bool isDefName = true;
                     foreach (XElement linkedField in fieldPath) {
@@ -448,6 +443,15 @@ namespace RimTrans.Builder {
                     yield return "  ";
                     yield return new XElement(fullFieldName.ToString(), fieldChild.Value);
                     yield return "\n";
+                }
+
+                // Recurse into child elements to find nested injectable fields.
+                if (fieldChild.HasElements) {
+                    fieldPath.AddLast(fieldChild);
+                    foreach (object content in GenRecursively(fieldChild, fieldPath)) {
+                        yield return content;
+                    }
+                    fieldPath.RemoveLast();
                 }
             }
         }
